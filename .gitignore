@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+
+# Logs
+*.log
+
+# Dépendances Docker
+docker-compose.override.yml
+.env
+
+# Fichiers temporaires
+.tmp/
+
+git ls-files veterinaire
+git ls-files veterinairefrontend
+
+
+# .DS_Store (macOS)
+.DS_Store

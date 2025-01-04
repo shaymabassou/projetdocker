@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ./veterinaire
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/veterinaire
+    volumes:
+      - ./veterinaire:/app
+    command: npm run start:prod
+
+  frontend:
+    build:
+      context: ./veterinairefrontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    # volumes:
+    #    - ./veterinairefrontend:/app
+    command: npm start
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+volumes:
+  mongo_data:
