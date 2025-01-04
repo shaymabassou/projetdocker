@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "bassou chaima/veterinaire"
-        DOCKER_IMAGE = "bassou chaima/veterinairefrontend"
+        VETERINAIRE_IMAGE = "bassouchaima/veterinaire"
+        FRONTEND_IMAGE = "bassouchaima/veterinairefrontend"
         DOCKER_REGISTRY_CREDENTIALS = 'docker-hub-credentials'
     }
 
@@ -11,41 +11,50 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/shaymabassou/projetdocker.git'
-            }git init
-
+            }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Images') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
+                    // Build backend image
+                    docker.build("${VETERINAIRE_IMAGE}:${env.BUILD_ID}", "./veterinaire")
+                    
+                    // Build frontend image
+                    docker.build("${FRONTEND_IMAGE}:${env.BUILD_ID}", "./veterinairefrontend")
                 }
             }
         }
 
-        agent any
-    stages {
         stage('Test Trivy') {
             steps {
                 sh 'trivy --version'
             }
         }
-    }
 
         stage('Scan Vulnerabilities with Trivy') {
             steps {
-                sh 'trivy image --exit-code 1 --severity HIGH ${DOCKER_IMAGE}:${env.BUILD_ID} || true'
+                script {
+                    // Scan backend image
+                    sh "trivy image --exit-code 1 --severity HIGH ${VETERINAIRE_IMAGE}:${env.BUILD_ID}"
+                    
+                    // Scan frontend image
+                    sh "trivy image --exit-code 1 --severity HIGH ${FRONTEND_IMAGE}:${env.BUILD_ID}"
+                }
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
+        stage('Push Docker Images to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image("${DOCKER_IMAGE}:${env.BUILD_ID}").push('latest')
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_REGISTRY_CREDENTIALS) {
+                        // Push backend image
+                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push()
+                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push('latest')
+                        
+                        // Push frontend image
+                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push()
+                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push('latest')
                     }
                 }
             }
