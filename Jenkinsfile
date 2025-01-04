@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "shayma420/veterinaire"
-        DOCKER_IMAGE = "shayma420/veterinairefrontend"
+        DOCKER_IMAGE = "bassou chaima/veterinaire"
+        DOCKER_IMAGE = "bassou chaima/veterinairefrontend"
         DOCKER_REGISTRY_CREDENTIALS = 'docker-hub-credentials'
     }
 
