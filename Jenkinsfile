@@ -30,8 +30,8 @@ pipeline {
             steps {
                 bat '''
                 curl -LO https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Windows-64bit.zip
-                powershell Expand-Archive -Path trivy_Windows-64bit.zip -DestinationPath C:\\Users\\Pc\\Downloads\\trivy_0.58.1_windows-64bit
-                set PATH=%PATH%;C:\\Users\\Pc\\Downloads\\trivy_0.58.1_windows-64bit
+                powershell Expand-Archive -Path trivy_Windows-64bit.zip -DestinationPath C:\\Trivy
+                set PATH=%PATH%;C:\\Trivy
                 trivy --version
                 '''
             }
