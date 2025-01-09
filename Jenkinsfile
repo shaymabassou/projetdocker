@@ -17,12 +17,12 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    // Build backend image
-                    docker.build("${VETERINAIRE_IMAGE}:${env.BUILD_ID}", "./veterinaire")
-                    
-                    // Build frontend image
-                    docker.build("${FRONTEND_IMAGE}:${env.BUILD_ID}", "./veterinairefrontend")
-                }
+            // Build backend image
+            sh 'docker -H tcp://localhost:2375 build -t ${VETERINAIRE_IMAGE}:${env.BUILD_ID} ./veterinaire'
+            
+            // Build frontend image
+            sh 'docker -H tcp://localhost:2375 build -t ${FRONTEND_IMAGE}:${env.BUILD_ID} ./veterinairefrontend'
+        }
             }
         }
 
