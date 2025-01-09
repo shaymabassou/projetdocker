@@ -18,16 +18,10 @@ pipeline {
             steps {
                 script {
                     // Build backend image
-                    sh '''
-                    #!/bin/bash
-                    docker -H tcp://localhost:2375 build -t ${VETERINAIRE_IMAGE}:${BUILD_ID} ./veterinaire
-                    '''
+                    docker.build("${VETERINAIRE_IMAGE}:${env.BUILD_ID}", "./veterinaire")
                     
                     // Build frontend image
-                    sh '''
-                    #!/bin/bash
-                    docker -H tcp://localhost:2375 build -t ${FRONTEND_IMAGE}:${BUILD_ID} ./veterinairefrontend
-                    '''
+                    docker.build("${FRONTEND_IMAGE}:${env.BUILD_ID}", "./veterinairefrontend")
                 }
             }
         }
