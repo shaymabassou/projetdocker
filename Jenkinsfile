@@ -14,6 +14,14 @@ pipeline {
             }
         }
 
+        stage('Test Docker Access') {
+            steps {
+                script {
+                    bat 'docker ps'
+                }
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 script {
