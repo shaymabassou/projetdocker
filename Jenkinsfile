@@ -17,12 +17,18 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-            // Build backend image
-            sh 'docker -H tcp://localhost:2375 build -t ${VETERINAIRE_IMAGE}:${env.BUILD_ID} ./veterinaire'
-            
-            // Build frontend image
-            sh 'docker -H tcp://localhost:2375 build -t ${FRONTEND_IMAGE}:${env.BUILD_ID} ./veterinairefrontend'
-        }
+                    // Build backend image
+                    sh '''
+                    #!/bin/bash
+                    docker -H tcp://localhost:2375 build -t ${VETERINAIRE_IMAGE}:${BUILD_ID} ./veterinaire
+                    '''
+                    
+                    // Build frontend image
+                    sh '''
+                    #!/bin/bash
+                    docker -H tcp://localhost:2375 build -t ${FRONTEND_IMAGE}:${BUILD_ID} ./veterinairefrontend
+                    '''
+                }
             }
         }
 
@@ -47,10 +53,10 @@ pipeline {
             steps {
                 script {
                     // Scan backend image
-                    bat "trivy image --exit-code 1 --severity HIGH ${VETERINAIRE_IMAGE}:${env.BUILD_ID} || exit /b 0"
+                    bat "trivy image --exit-code 1 --severity HIGH ${VETERINAIRE_IMAGE}:${BUILD_ID} || exit /b 0"
                     
                     // Scan frontend image
-                    bat "trivy image --exit-code 1 --severity HIGH ${FRONTEND_IMAGE}:${env.BUILD_ID} || exit /b 0"
+                    bat "trivy image --exit-code 1 --severity HIGH ${FRONTEND_IMAGE}:${BUILD_ID} || exit /b 0"
                 }
             }
         }
@@ -60,12 +66,12 @@ pipeline {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', DOCKER_REGISTRY_CREDENTIALS) {
                         // Push backend image
-                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push()
-                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push('latest')
+                        docker.image("${VETERINAIRE_IMAGE}:${BUILD_ID}").push()
+                        docker.image("${VETERINAIRE_IMAGE}:${BUILD_ID}").push('latest')
                         
                         // Push frontend image
-                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push()
-                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push('latest')
+                        docker.image("${FRONTEND_IMAGE}:${BUILD_ID}").push()
+                        docker.image("${FRONTEND_IMAGE}:${BUILD_ID}").push('latest')
                     }
                 }
             }
