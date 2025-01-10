@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        VETERINAIRE_IMAGE = "bassouchaima/veterinaire"
-        FRONTEND_IMAGE = "bassouchaima/veterinairefrontend"
+        VETERINAIRE_IMAGE = "shayma420/veterinaire"
+        FRONTEND_IMAGE = "shayma420/veterinairefrontend"
         DOCKER_REGISTRY_CREDENTIALS = 'docker-hub-credentials'
     }
 
