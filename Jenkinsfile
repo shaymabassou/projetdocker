@@ -14,8 +14,6 @@ pipeline {
             }
         }
 
-    
-
         stage('Build Docker Images') {
             steps {
                 script {
@@ -28,16 +26,16 @@ pipeline {
             }
         }
 
-        stage('Install Trivy') {
-            steps {
-                bat '''
-                curl -LO https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Windows-64bit.zip
-                powershell Expand-Archive -Path trivy_Windows-64bit.zip -DestinationPath C:\\Trivy
-                set PATH=%PATH%;C:\\Trivy
-                trivy --version
-                '''
-            }
-        }
+        // stage('Install Trivy') {
+        //     steps {
+        //         bat '''
+        //         curl -LO https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Windows-64bit.zip
+        //         powershell Expand-Archive -Path trivy_Windows-64bit.zip -DestinationPath C:\\Trivy
+        //         set PATH=%PATH%;C:\\Trivy
+        //         trivy --version
+        //         '''
+        //     }
+        // }
 
         stage('Check Trivy Installation') {
             steps {
