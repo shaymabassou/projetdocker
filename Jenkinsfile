@@ -26,31 +26,30 @@ pipeline {
             }
         }
 
-        // stage('Install Trivy') {
-        //     steps {
-        //         bat '''
-        //         curl -LO https://github.com/aquasecurity/trivy/releases/latest/download/trivy_Windows-64bit.zip
-        //         powershell Expand-Archive -Path trivy_Windows-64bit.zip -DestinationPath C:\\Trivy
-        //         set PATH=%PATH%;C:\\Trivy
-        //         trivy --version
-        //         '''
-        //     }
-        // }
-
-        stage('Check Trivy Installation') {
+        stage('Scan Backend Image with Trivy') {
             steps {
-                bat 'trivy --version'
+                script {
+                    sh """
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \\
+                    -e TRIVY_TIMEOUT=10m \\
+                    aquasec/trivy:latest image --exit-code 0 \\
+                    --severity LOW,MEDIUM,HIGH,CRITICAL \\
+                    ${VETERINAIRE_IMAGE}:${env.BUILD_ID}
+                    """
+                }
             }
         }
 
-        stage('Scan Vulnerabilities with Trivy') {
+        stage('Scan Frontend Image with Trivy') {
             steps {
                 script {
-                    // Scan backend image
-                    bat "trivy image --exit-code 1 --severity HIGH ${VETERINAIRE_IMAGE}:${BUILD_ID} || exit /b 0"
-                    
-                    // Scan frontend image
-                    bat "trivy image --exit-code 1 --severity HIGH ${FRONTEND_IMAGE}:${BUILD_ID} || exit /b 0"
+                    sh """
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \\
+                    -e TRIVY_TIMEOUT=10m \\
+                    aquasec/trivy:latest image --exit-code 0 \\
+                    --severity LOW,MEDIUM,HIGH,CRITICAL \\
+                    ${FRONTEND_IMAGE}:${env.BUILD_ID}
+                    """
                 }
             }
         }
@@ -60,12 +59,12 @@ pipeline {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', DOCKER_REGISTRY_CREDENTIALS) {
                         // Push backend image
-                        docker.image("${VETERINAIRE_IMAGE}:${BUILD_ID}").push()
-                        docker.image("${VETERINAIRE_IMAGE}:${BUILD_ID}").push('latest')
+                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push()
+                        docker.image("${VETERINAIRE_IMAGE}:${env.BUILD_ID}").push('latest')
                         
                         // Push frontend image
-                        docker.image("${FRONTEND_IMAGE}:${BUILD_ID}").push()
-                        docker.image("${FRONTEND_IMAGE}:${BUILD_ID}").push('latest')
+                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push()
+                        docker.image("${FRONTEND_IMAGE}:${env.BUILD_ID}").push('latest')
                     }
                 }
             }
