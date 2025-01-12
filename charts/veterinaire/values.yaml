@@ -1,4 +1,5 @@
 # Default values for veterinaire.
+
 replicaCount: 3
 
 image:
@@ -31,12 +32,16 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 10
 
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 10
 
 autoscaling:
   enabled: false
@@ -49,3 +54,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+serviceAccount:
+  create: true
+  name: ""
