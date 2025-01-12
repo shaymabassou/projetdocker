@@ -1,26 +1,18 @@
-# Default values for veterinairefrontend.
-# Declare variables to be passed into your templates.
-
-# Replica count for the deployment.
 replicaCount: 3
 
-# Container image details.
 image:
   repository: shayma420/veterinairefrontend
   tag: latest
   pullPolicy: IfNotPresent
 
-# Service configuration.
 service:
   type: ClusterIP
   port: 3001
 
-# Environment variables for the container.
 env:
   - name: BACKEND_URL
     value: "http://veterinaire-service:3000"
 
-# Ingress configuration.
 ingress:
   enabled: true
   annotations: {}
@@ -29,77 +21,7 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  # Example for TLS:
-  # tls:
-  #   - secretName: chart-example-tls
-  #     hosts:
-  #       - veterinaire-app.local
 
-# Pod and container security contexts.
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-# Kubernetes Pod Annotations and Labels.
-podAnnotations: {}
-podLabels: {}
-
-# Resources for the containers.
-resources: {}
-  # Uncomment and specify limits and requests if needed.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-# Liveness and readiness probes.
-livenessProbe:
-  httpGet:
-    path: /
-    port: 3001
-  initialDelaySeconds: 10
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /
-    port: 3001
-  initialDelaySeconds: 10
-  periodSeconds: 10
-
-# Autoscaling configuration.
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-# Additional volumes and mounts.
-volumes: []
-# Example:
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
-
-volumeMounts: []
-# Example:
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
-
-# Node selector, tolerations, and affinity.
-nodeSelector: {}
-tolerations: []
-affinity: {}
+serviceAccount:
+  create: true
+  name: ""  # Use a default-generated name if left empty.
