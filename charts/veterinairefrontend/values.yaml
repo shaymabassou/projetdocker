@@ -25,3 +25,9 @@ ingress:
 serviceAccount:
   create: true
   name: ""  # Use a default-generated name if left empty.
+
+autoscaling:
+  enabled: false  # Change to true if you want to enable HPA
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
