@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: veterinaire-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: veterinaire-backend
+  template:
+    metadata:
+      labels:
+        app: veterinaire-backend
+    spec:
+      containers:
+      - name: backend
+        image: shayma420/veterinaire:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: MONGO_URI
